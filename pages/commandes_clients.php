@@ -111,6 +111,10 @@ label {
       style="font-size:24px;color:green"></i>
   </a>
 
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#show_stats">
+    statistiques
+  </button>
+
 <a href="vuegeneral_hier.php?id=<?= $id_user ?>" class="btn btn-warning ml-auto">Point d'hier</a>
 
 
@@ -289,6 +293,39 @@ label {
               </div>
               <button type="submit" class="btn btn-primary mr-2" name="saveCommande">Enregister</button>
               <button class="btn btn-light">Annuler</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+
+
+    <!-- /.modal-dialog -->
+  </div>
+
+  <div class="modal fade" id="show_stats">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Statistiques</h4>
+        </div>
+        <div class="modal-body">
+          <form class="forms-sample" method="post" action="client_statistiques.php?id=<?= $id_user ?>">
+            <div class="card-body">
+            <div class="form-group">
+                                <label for="exampleInputEmail1">Année</label>
+                                  <select name="year" class="form-control">
+                                                <option value="2020">2020</option>
+                                                <option value="2021">2021</option>
+                                                <option value="2022">2022</option>
+                                                <option value="2023">2023</option>
+                                                <option value="2024">2024</option>
+                                                <option value="2025">2025</option>
+                                               
+                                  </select>
+                            </div>
+              <button type="submit" class="btn btn-primary mr-2" name="saveCommande">Voir Statiquestiques</button>
             </div>
           </form>
         </div>
