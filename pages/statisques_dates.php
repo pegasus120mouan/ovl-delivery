@@ -6,7 +6,7 @@ if (isset($_POST['client']) && isset($_POST['month_start']) && isset($_POST['mon
     $month_start = (int)$_POST['month_start']; // Mois de début sélectionné
     $month_end = (int)$_POST['month_end']; // Mois de fin sélectionné
     $client = $_POST['client']; // Nom du client sélectionné
-    $year = date('Y'); // Utilisation de l'année actuelle, vous pouvez ajuster si nécessaire
+    $year = $_POST['year']; // Utilisation de l'année actuelle, vous pouvez ajuster si nécessaire
 
     // Définir la locale en français
     setlocale(LC_TIME, 'fr_FR.UTF-8');

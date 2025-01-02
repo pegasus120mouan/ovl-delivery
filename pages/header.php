@@ -542,11 +542,6 @@ if (!isset($_SESSION['user_id'])) {
 
 
 
-
-
-
-
-
            <li class="nav-item">
               <a href="#" class="nav-link">
                 <i class="fa fa-area-chart"></i>
@@ -586,6 +581,26 @@ if (!isset($_SESSION['user_id'])) {
                 </p>
               </a>
            </li>
+
+
+            <li class="nav-header"><strong>GESTION DES PAIES</strong></li>
+             <li class="nav-item">
+              <a href="listes_employes.php" class="nav-link">
+                <i class="nav-icon far fa-calendar-alt"></i>
+                <p>
+                  Listes des employés
+                  <span class="badge badge-info right">2</span>
+                </p>
+              </a>
+             </li>
+            <li class="nav-item">
+              <a href="analytics/vue_gestion_caisse.php" class="nav-link">
+                <i class="nav-icon far fa-image"></i>
+                <p>
+                  Gestion des paiements
+                </p>
+              </a>
+            </li>
 
             <li class="nav-item">
               <a href="../logout.php" class="nav-link">

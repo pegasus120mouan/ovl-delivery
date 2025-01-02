@@ -215,14 +215,14 @@ $statistiques_clients = $stmt->fetchAll();
                                                 <option value="08">Aout</option>
                                                 <option value="09">Septembre</option>
                                                 <option value="10">Octobre</option>
-                                                <option value="11">Novembre/option>
+                                                <option value="11">Novembre</option>
                                                 <option value="12">Décembre</option>
                                   </select>
                             </div>
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Mois Fin</label>
                                   <select name="month_end" class="form-control">
-                                                <option value="01">Janvier</option>
+                                               <option value="01">Janvier</option>
                                                 <option value="02">Février</option>
                                                 <option value="03">Mars</option>
                                                 <option value="04">Avril</option>
@@ -232,8 +232,8 @@ $statistiques_clients = $stmt->fetchAll();
                                                 <option value="08">Aout</option>
                                                 <option value="09">Septembre</option>
                                                 <option value="10">Octobre</option>
-                                                <option value="11">Novembre/option>
-                                                <option value="12">Decembre</option>
+                                                <option value="11">Novembre</option>
+                                                <option value="12">Décembre</option>
                                   </select>
                             </div>
                                   <div class="form-group">
@@ -245,6 +245,18 @@ $statistiques_clients = $stmt->fetchAll();
                                       ?></select>
 
                                   </div>
+                                  <div class="form-group">
+                                <label for="exampleInputEmail1">Année</label>
+                                  <select name="year" class="form-control">
+                                                <option value="2020">2020</option>
+                                                <option value="2021">2021</option>
+                                                <option value="2022">2022</option>
+                                                <option value="2023">2023</option>
+                                                <option value="2024">2024</option>
+                                                <option value="2025">2025</option>
+                                               
+                                  </select>
+                            </div>
                             <input type="submit" class="btn btn-primary mr-2" value="Rechercher">
                         </div>
                     </form>
