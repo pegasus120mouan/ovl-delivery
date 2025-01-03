@@ -165,9 +165,14 @@ foreach ($stats as $stat) {
                     <h1 class="m-0">Statistiques <?= $year ?></h1>
                 </div>
                 <div class="col-sm-6">
-                    <button onclick="window.print()" class="btn btn-primary float-right print-button no-print">
-                        <i class="fas fa-print"></i> Imprimer en PDF
-                    </button>
+                <form action="impression_statistiques.php" method="get" target="_blank" class="float-right no-print">
+    <input type="hidden" name="id" value="<?php echo $client_id; ?>">
+    <input type="hidden" name="year" value="<?php echo $year; ?>">
+    <button type="submit" class="btn btn-primary print-button">
+        <i class="fas fa-print"></i> Imprimer en PDF
+    </button>
+</form>
+
                 </div>
             </div>
         </div>
