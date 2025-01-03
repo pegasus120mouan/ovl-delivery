@@ -192,47 +192,73 @@ if (isset($_GET['id'])) {
         
         // Récupérer et créer le graphique des top communes
         $stmt_top_livrees = $conn->prepare("SELECT 
-            communes,
+            communes as nom_commune,
             COUNT(*) as total
         FROM commandes 
         WHERE utilisateur_id = ? 
             AND YEAR(date_commande) = ?
-            AND statut = 'livré'
+            AND (statut = 'livré' OR statut = 'livrée')
             AND communes IS NOT NULL
+            AND communes != ''
         GROUP BY communes
-        ORDER BY total DESC
+        ORDER BY total DESC, communes ASC
         LIMIT 10");
         
         $stmt_top_livrees->execute([$id_client, $year]);
         $top_communes = $stmt_top_livrees->fetchAll(PDO::FETCH_ASSOC);
 
         if (!empty($top_communes)) {
-            $commune_names = array_column($top_communes, 'communes');
+            $commune_names = array_column($top_communes, 'nom_commune');
             $commune_totals = array_column($top_communes, 'total');
 
             // Graphique des communes
-            $communes_graph = setupGraph(800, 400, "Top 10 des Communes Livrées en $year");
+            $communes_graph = new Graph(800, 500); // Augmentation de la hauteur
             $communes_graph->SetScale('textlin');
+            $communes_graph->SetFrame(false);
+            $communes_graph->SetBox(false);
             
-            // Configuration des barres horizontales
-            $hbar = new BarPlot($commune_totals);
-            $hbar->SetFillColor("#9C27B0");
-            $hbar->SetColor("#9C27B0");
+            // Marges optimisées pour les noms de communes
+            $communes_graph->img->SetMargin(120, 40, 40, 120); // Augmentation de la marge du bas
             
-            // Valeurs
-            $hbar->value->Show();
-            $hbar->value->SetColor('#333333');
-            $hbar->value->SetFormat('%d');
+            // Titre
+            $communes_graph->title->Set("Top 10 des communes livrées");
+            $communes_graph->title->SetFont(FF_ARIAL, FS_BOLD, 14);
+            $communes_graph->title->SetColor('#333333');
             
-            // Axes
-            $communes_graph->xaxis->SetFont(FF_ARIAL, FS_NORMAL);
-            $communes_graph->yaxis->SetFont(FF_ARIAL, FS_NORMAL);
-            $communes_graph->yaxis->SetTickLabels($commune_names);
-            $communes_graph->yaxis->SetLabelMargin(10);
+            // Grille
+            $communes_graph->ygrid->Show(true);
+            $communes_graph->ygrid->SetColor('#EEEEEE');
+            $communes_graph->xgrid->Show(false);
+            
+            // Configurer l'axe Y
+            $communes_graph->yaxis->SetFont(FF_ARIAL, FS_NORMAL, 10);
             $communes_graph->yaxis->SetColor('#333333');
-            $communes_graph->xaxis->SetColor('#333333');
+            $communes_graph->yaxis->SetLabelMargin(10);
+            $communes_graph->yaxis->SetTitleMargin(50);
+            $communes_graph->yaxis->title->Set("Nombre de livraisons réussies");
+            $communes_graph->yaxis->title->SetFont(FF_ARIAL, FS_NORMAL, 12);
             
-            $communes_graph->Add($hbar);
+            // Configurer l'axe X
+            $communes_graph->xaxis->SetFont(FF_ARIAL, FS_NORMAL, 10);
+            $communes_graph->xaxis->SetColor('#333333');
+            $communes_graph->xaxis->SetLabelAngle(45);
+            $communes_graph->xaxis->SetTickLabels(array_map('ucfirst', $commune_names));
+            $communes_graph->xaxis->SetLabelMargin(15); // Augmentation de la marge des labels
+            
+            // Barres verticales
+            $bplot = new BarPlot($commune_totals);
+            $bplot->SetFillColor("#64B5F6"); // Bleu clair comme dans l'image
+            $bplot->SetColor("#64B5F6");
+            $bplot->SetWidth(0.7);
+            
+            // Afficher les valeurs au-dessus des barres
+            $bplot->value->Show();
+            $bplot->value->SetFont(FF_ARIAL, FS_NORMAL, 10);
+            $bplot->value->SetFormat('%d');
+            $bplot->value->SetColor('#333333');
+            
+            // Ajouter les barres au graphique
+            $communes_graph->Add($bplot);
         }
 
         // Récupérer le coût total
@@ -277,30 +303,49 @@ if (isset($_GET['id'])) {
             
             // En-tête du PDF
             $pdf->AddPage('L');
+
+            // Titre et icônes de navigation
             $pdf->SetFont('Arial', 'B', 16);
-            $pdf->Cell(0, 10, "Rapport des Livraisons $year", 0, 1, 'C');
-            $pdf->SetFont('Arial', '', 12);
             $pdf->Cell(0, 10, "OVL DELIVERY SERVICES", 0, 1, 'C');
             
-            // Ajouter le rectangle avec le coût total
+            // Ligne d'icônes
+            $pdf->SetFont('Arial', '', 12);
+            $icons = "🏠  📱  📷  🌐";
+            $pdf->Cell(0, 10, $icons, 0, 1, 'C');
+            
+            // Informations de contact
+            $pdf->SetFont('Arial', '', 10);
+            $pdf->Cell(0, 6, "Sarl au Capital de 1 000 000 CFA", 0, 1, 'C');
+            $pdf->Cell(0, 6, "Cocody Riviera Golf en face de l'Ambassade des USA", 0, 1, 'C');
+            $pdf->Cell(0, 6, "Tel: +225 0787703000 - +225059482385", 0, 1, 'C');
+            $pdf->Cell(0, 6, "Email: finance@ovl-delivery.online", 0, 1, 'C');
+            $pdf->Cell(0, 6, "ovl-delivery.online", 0, 1, 'C');
+            $pdf->Ln(10);
+
+            // Titre du montant total
+            $pdf->SetFont('Arial', 'B', 16);
+            $pdf->Cell(0, 10, "Montant total généré en $year", 0, 1, 'C');
             $pdf->Ln(5);
-            $pdf->SetFillColor(240, 240, 240); // Gris clair
-            $pdf->SetFont('Arial', 'B', 14);
-            
-            // Calculer la largeur du rectangle (1/2 de la page)
-            $rectWidth = $pdf->GetPageWidth() / 2;
-            $rectX = ($pdf->GetPageWidth() - $rectWidth) / 2; // Centrer le rectangle
-            
-            // Dessiner le rectangle et ajouter le texte
-            $pdf->Rect($rectX, $pdf->GetY(), $rectWidth, 20, 'F');
-            $pdf->SetY($pdf->GetY() + 5); // Ajuster la position Y pour le texte
-            
-            // Formater le montant avec des espaces comme séparateur de milliers
+
+            // Rectangle noir pour le montant
+            $pdf->SetFillColor(0, 0, 0);
+            $rectWidth = $pdf->GetPageWidth() * 0.8;
+            $rectX = ($pdf->GetPageWidth() - $rectWidth) / 2;
+            $rectHeight = 30;
+            $pdf->Rect($rectX, $pdf->GetY(), $rectWidth, $rectHeight, 'F');
+
+            // Montant en blanc sur fond noir
+            $pdf->SetTextColor(255, 255, 255);
+            $pdf->SetFont('Arial', 'B', 24);
             $montant_formatte = number_format($total_cout, 0, ',', ' ');
-            $pdf->SetX($rectX); // Positionner à gauche du rectangle
-            $pdf->Cell($rectWidth, 10, "Montant Total des Livraisons: " . $montant_formatte . " FCFA", 0, 1, 'C');
+            $pdf->SetY($pdf->GetY() + ($rectHeight/2) - 6);
+            $pdf->Cell(0, 12, $montant_formatte . " Cfa", 0, 1, 'C');
+
+            // Réinitialiser les couleurs
+            $pdf->SetTextColor(0, 0, 0);
+            $pdf->SetFillColor(255, 255, 255);
             
-            $pdf->Ln(10); // Espace avant les graphiques
+            $pdf->Ln(20);
 
             // Ajouter les graphiques
             if (file_exists($bar_chart)) {
@@ -316,7 +361,7 @@ if (isset($_GET['id'])) {
 
             if (isset($communes_graph) && file_exists($communes_chart)) {
                 $pdf->AddPage('L');
-                $pdf->Image($communes_chart, 10, 40, 280);
+                $pdf->Image($communes_chart, 10, 20, 280, 180); // Ajustement de la position et de la taille
                 @unlink($communes_chart); // Nettoyer après utilisation
             }
 
