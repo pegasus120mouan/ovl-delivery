@@ -48,7 +48,20 @@ $requete_colis->execute();
 $header_calcul_nb = $requete_colis->fetch(PDO::FETCH_ASSOC);
 
 
+$query_commandes = $conn->prepare("SELECT COUNT(*) as count_livrees FROM commandes 
+    WHERE statut = 'livré' 
+    AND DATE(date_commande) = CURDATE()");
+$query_commandes->execute();
+$commandes_livrees = $query_commandes->fetch(PDO::FETCH_ASSOC);
+$count_livrees = $commandes_livrees['count_livrees'];
 
+
+$query_commandes_non_livrees = $conn->prepare("SELECT COUNT(*) as count_non_livrees FROM commandes 
+    WHERE statut = 'Non Livré' 
+    AND DATE(date_commande) = CURDATE()");
+$query_commandes_non_livrees->execute();
+$commandes_non_livrees = $query_commandes_non_livrees->fetch(PDO::FETCH_ASSOC);
+$count_non_livrees = $commandes_non_livrees['count_non_livrees'];
 
 
 if (!isset($_SESSION['user_id'])) {
@@ -121,6 +134,19 @@ if (!isset($_SESSION['user_id'])) {
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.8.0/mapbox-gl.css" rel="stylesheet">
 
 </head>
+<style>.power-off-btn i {
+  font-size: 2rem;  /* Augmente la taille de l'icône */
+  color: red !important; /* Assure que l'icône est rouge */
+}
+
+.power-off-btn i:hover {
+  color: darkred !important; /* Change la couleur au survol */
+  transform: scale(1.2); /* Ajoute un effet d'agrandissement au survol */
+  transition: transform 0.2s, color 0.2s; /* Animation douce */
+}
+
+
+</style>
 
 <body class="hold-transition sidebar-mini layout-fixed">
   <div class="wrapper">
@@ -179,21 +205,18 @@ if (!isset($_SESSION['user_id'])) {
             <span class="dropdown-item dropdown-header">0 Notifications</span>
             <div class="dropdown-divider"></div>
             <a href="#" class="dropdown-item">
-              <i class="fas fa-envelope mr-2"></i> 0 Nouveaux Messages
-              <span class="float-right text-muted text-sm">3 mins</span>
+            <i class="fas fa-users mr-2"></i> <?php echo $count_non_livrees; ?> Commandes Non validées
             </a>
             <div class="dropdown-divider"></div>
             <a href="#" class="dropdown-item">
-              <i class="fas fa-users mr-2"></i> 8 friend requests
-              <span class="float-right text-muted text-sm">12 hours</span>
+            <i class="fas fa-users mr-2"></i> <?php echo $count_livrees; ?> Commandes validées
             </a>
             <div class="dropdown-divider"></div>
             <a href="#" class="dropdown-item">
               <i class="fas fa-file mr-2"></i> 3 new reports
-              <span class="float-right text-muted text-sm">2 days</span>
             </a>
             <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+            <a href="#" class="dropdown-item dropdown-footer">Toutes les notifications</a>
           </div>
         </li>
         <li class="nav-item">
@@ -202,8 +225,8 @@ if (!isset($_SESSION['user_id'])) {
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#" role="button">
-            <i class="fas fa-th-large"></i>
+          <a class="nav-link power-off-btn" href="../logout.php" role="button">
+            <i class="fas fa-power-off"></i>
           </a>
         </li>
       </ul>
@@ -601,17 +624,6 @@ if (!isset($_SESSION['user_id'])) {
                 </p>
               </a>
             </li>
-
-            <li class="nav-item">
-              <a href="../logout.php" class="nav-link">
-              <i class="fa fa-arrow-right"></i>
-
-                <p>
-                  Déconnexion
-                </p>
-              </a>
-           </li>
-
           </ul>
         </nav>
         <!-- /.sidebar-menu -->
