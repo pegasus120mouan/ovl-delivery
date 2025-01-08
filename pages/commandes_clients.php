@@ -34,7 +34,19 @@ $commande_clients = $requete->fetchAll();
 
 
 
+$sql = "SELECT utilisateurs.id as utilisateur_id, 
+ utilisateurs.nom as utilisateur_nom, 
+ utilisateurs.prenoms as utilisateur_prenoms, 
+ utilisateurs.contact as utilisateur_contact,
+ utilisateurs.avatar as utilisateur_avatar,
+ boutiques.nom as boutique_nom 
+ FROM utilisateurs 
+ JOIN boutiques ON utilisateurs.boutique_id = boutiques.id 
+ WHERE utilisateurs.id = :id_user";
 
+$requete1 = $conn->prepare($sql);
+$requete1->bindParam(':id_user', $id_user, PDO::PARAM_INT);
+$requete1->execute();
 
 
 $rows = $getLivreurs->fetchAll(PDO::FETCH_ASSOC);
@@ -185,7 +197,7 @@ label {
         <i class="fa fa-edit"></i> Enregistrer une commande
       </button>
 
-      <button type="button" class="btn btn-danger mr-2" data-toggle="modal" data-target="#add-point" onclick="window.location.href='clients_commandes_print.php?id=<?= $id_user ?>';">
+      <button type="button" class="btn btn-danger mr-2" data-toggle="modal" data-target="#print_point">
         <i class="fa fa-print"></i> Imprimer un point
       </button>
 
@@ -394,6 +406,36 @@ label {
 
     <!-- /.modal-dialog -->
   </div>
+
+  <div class="modal fade" id="print_point">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Imprimer un point</h4>
+        </div>
+        <div class="modal-body">
+          <form action="traitement_clients_commandes_print.php" method="POST">
+             <div class="form-group">
+        <select name="utilisateur_id" class="form-control">
+          <?php
+          while ($selection = $requete1->fetch()) {
+            echo '<option value="' . $selection['boutique_nom'] . '">' . $selection['boutique_nom'] . '</option>';
+          }
+          ?></select>
+
+      </div>
+              <div class="form-group">
+                <label for="exampleInputPassword1">Date</label>
+                <input type="date" class="form-control" id="exampleInputPassword1" placeholder="Selectionner date"
+                  name="date">
+              </div>
+              <button type="submit" class="btn btn-danger mr-2">Imprimer</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
 
   <div class="modal fade" id="show_stats">
     <div class="modal-dialog">
