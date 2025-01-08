@@ -100,22 +100,113 @@ label {
     border-radius: 4px; /* Ajout de la bordure arrondie */
     cursor: pointer;
 }
-</style>
+  .pagination-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination-link {
+    padding: 8px;
+    text-decoration: none;
+    color: white;
+    background-color: #007bff; 
+    border: 1px solid #007bff;
+    border-radius: 4px; 
+    margin-right: 4px;
+}
+
+.items-per-page-form {
+    margin-left: 20px;
+}
+
+label {
+    margin-right: 5px;
+}
+
+.items-per-page-select {
+    padding: 6px;
+    border-radius: 4px; 
+}
+
+.submit-button {
+    padding: 6px 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px; 
+    cursor: pointer;
+}
+ .custom-icon {
+            color: green;
+            font-size: 24px;
+            margin-right: 8px;
+ }
+ .spacing {
+    margin-right: 10px; 
+    margin-bottom: 20px;
+}
+        @media only screen and (max-width: 767px) {
+            
+            th {
+                display: none; 
+            }
+            tbody tr {
+                display: block;
+                margin-bottom: 20px;
+                border: 1px solid #ccc;
+                padding: 10px;
+            }
+            tbody tr td::before {
+
+                font-weight: bold;
+                margin-right: 5px;
+            }
+        }
+        .margin-right-15 {
+        margin-right: 15px;
+       }
+        .block-container {
+      background-color:  #d7dbdd ;
+      padding: 20px;
+      border-radius: 5px;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    </style>
 
 
 <div class="row">
-  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-commande">
-    Enregistrer une commande
-  </button>
-  <a class="btn btn-outline-secondary" href="clients_commandes_print.php?id=<?= $id_user ?>"><i class="fa fa-print"
-      style="font-size:24px;color:green"></i>
-  </a>
+  <div class="block-container d-flex justify-content-between align-items-center w-100">
+    <!-- Groupe de boutons alignés à gauche -->
+    <div class="d-flex">
+      <button type="button" class="btn btn-primary mr-2" data-toggle="modal" data-target="#add-commande">
+        <i class="fa fa-edit"></i> Enregistrer une commande
+      </button>
 
-  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#show_stats">
-    statistiques
-  </button>
+      <button type="button" class="btn btn-danger mr-2" data-toggle="modal" data-target="#add-point" onclick="window.location.href='clients_commandes_print.php?id=<?= $id_user ?>';">
+        <i class="fa fa-print"></i> Imprimer un point
+      </button>
 
-<a href="vuegeneral_hier.php?id=<?= $id_user ?>" class="btn btn-warning ml-auto">Point d'hier</a>
+      <button type="button" class="btn btn-success mr-2" data-toggle="modal" data-target="#show_stats">
+        <i class="fa fa-bar-chart"></i> Statistiques
+      </button>
+    </div>
+
+    <!-- Bouton aligné à droite -->
+    <button type="button" class="btn btn-warning ml-auto" onclick="window.location.href='vuegeneral_hier.php?id=<?= $id_user ?>';">
+      <i class="fa fa-chevron-circle-left"></i> Point d'hier
+    </button>
+  </div>
+</div>
+
+
+
+
+
+
+
 
 
 
