@@ -1,5 +1,5 @@
 <?php
-//require_once '../inc/functions/connexion.php';
+require_once '../inc/functions/connexion.php';
 
 include('header_clients.php');
 require_once '../inc/functions/requete/clients/requete_commandes_clients.php';
@@ -27,19 +27,134 @@ $requete->bindParam(':id_user', $id_user, PDO::PARAM_INT);
 $requete->execute();
 $commandes = $requete->fetchAll();
 
+$limit = $_GET['limit'] ?? 15;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+
+$commande_pages = array_chunk($commandes, $limit );
+//$commandes_list = $commande_pages[$_GET['page'] ?? ] ;
+$commandes_list = $commande_pages[$page - 1] ?? [];
+
+//requete Boutique //
+$sql_boutique = "SELECT utilisateurs.id as utilisateur_id, 
+ utilisateurs.nom as utilisateur_nom, 
+ utilisateurs.prenoms as utilisateur_prenoms, 
+ utilisateurs.contact as utilisateur_contact,
+ utilisateurs.avatar as utilisateur_avatar,
+ boutiques.nom as boutique_nom 
+ FROM utilisateurs 
+ JOIN boutiques ON utilisateurs.boutique_id = boutiques.id 
+ WHERE utilisateurs.id = :id_user";
+
+ $requete_boutique = $conn->prepare($sql_boutique);
+ $requete_boutique->bindParam(':id_user', $id_user, PDO::PARAM_INT);
+ $requete_boutique->execute();
+
 ?>
+<!-- Style-->
+
+<style>
+  .pagination-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination-link {
+    padding: 8px;
+    text-decoration: none;
+    color: white;
+    background-color: #007bff; 
+    border: 1px solid #007bff;
+    border-radius: 4px; 
+    margin-right: 4px;
+}
+
+.items-per-page-form {
+    margin-left: 20px;
+}
+
+label {
+    margin-right: 5px;
+}
+
+.items-per-page-select {
+    padding: 6px;
+    border-radius: 4px; 
+}
+
+.submit-button {
+    padding: 6px 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px; 
+    cursor: pointer;
+}
+ .custom-icon {
+            color: green;
+            font-size: 24px;
+            margin-right: 8px;
+ }
+ .spacing {
+    margin-right: 10px; 
+    margin-bottom: 20px;
+}
+
+        @media only screen and (max-width: 767px) {
+            
+            th {
+                display: none; 
+            }
+            tbody tr {
+                display: block;
+                margin-bottom: 20px;
+                border: 1px solid #ccc;
+                padding: 10px;
+            }
+            tbody tr td::before {
+
+                font-weight: bold;
+                margin-right: 5px;
+            }
+        }
+        .margin-right-15 {
+        margin-right: 15px;
+       }
+        .block-container {
+      background-color:  #d7dbdd ;
+      padding: 20px;
+      border-radius: 5px;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    </style> 
+    <!-- Fin style -->
 
 
 
+
+<div class="row">
+
+    <div class="block-container">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-commande">
+      <i class="fa fa-edit"></i>Enregistrer une commande
+    </button>
+
+    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#add-point">
+      <i class="fa fa-print"></i> Imprimer un point
+    </button>
+
+    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#search-commande">
+      <i class="fa fa-search" disabled></i> Recherche un point
+    </button>
+
+   <button type="button" class="btn btn-dark" onclick="window.location.href='#'">
+              <i class="fa fa-print"></i> Exporter la liste des commandes
+             </button>
+</div>
 
 <!-- Main row -->
-<div class="row">
-  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-commande">
-    Enregistrer une commande
-  </button>
-
-  <a class="btn btn-outline-secondary" href="clients_commandes_print.php"><i class="fa fa-print"
-      style="font-size:24px;color:green"></i></a>
   <!--<a href="commandes_update.php"><i class="fa fa-print" style="font-size:24px;color:green">Imprimer point du jour</i></a>
                 <button type="button"  class="btn btn-primary"><i class="fa fa-print"></i> Imprimer point du jour</button>-->
   <table id="example1" class="table table-bordered table-striped">
@@ -56,7 +171,7 @@ $commandes = $requete->fetchAll();
       </tr>
     </thead>
     <tbody>
-      <?php foreach ($commandes as $commande) : ?>
+      <?php foreach ($commandes_list as $commande) : ?>
       <tr>
         <td><?= $commande['communes'] ?></td>
         <td><?= $commande['cout_global'] ?></td>
@@ -83,12 +198,22 @@ $commandes = $requete->fetchAll();
         <td><?= $commande['date_commande'] ?></td>
 
         <td class="actions">
-          <a href="update_commande_client.php?id=<?= $commande['commande_id'] ?>" class="edit"><i
-              class="fas fa-pen fa-xs" style="font-size:24px;color:blue"></i></a>
-          <a href="delete_commande_client.php?id=<?= $commande['commande_id'] ?>" class="trash"><i
-              class="fas fa-trash fa-xs" style="font-size:24px;color:red"></i></a>
-        </td>
-        <td>
+            <?php
+            $statut = $commande['statut']; // Exemple : "Livré" ou "Non Livré"
+            $date_commande = $commande['date_commande']; // Date de la commande
+            $today = date('Y-m-d'); // Date actuelle
+
+            // Vérifie si les conditions sont remplies
+            $disabled = ($statut === 'Livré' || $statut === 'Non Livré') && $date_commande !== $today ? 'disabled' : '';
+            ?>
+            <a href="update_commande_client.php?id=<?= $commande['commande_id'] ?>" class="edit">
+              <i class="fas fa-pen fa-xs" style="font-size:24px;color:blue; <?= $disabled ? 'pointer-events:none; opacity:0.5;' : '' ?>"></i>
+            </a>
+            <a href="delete_commande_client.php?id=<?= $commande['commande_id'] ?>" class="trash">
+              <i class="fas fa-trash fa-xs" style="font-size:24px;color:red; <?= $disabled ? 'pointer-events:none; opacity:0.5;' : '' ?>"></i>
+            </a>
+          </td>
+
       </tr>
       <div class="modal" id="update-<?= $commande['commande_id'] ?>">
         <div class="modal-dialog">
@@ -133,6 +258,30 @@ $commandes = $requete->fetchAll();
       <?php endforeach; ?>
     </tbody>
   </table>
+
+  <div class="pagination-container bg-secondary d-flex justify-content-center w-100 text-white p-3">
+    <?php if($page > 1 ): ?>
+        <a href="?page=<?= $page - 1 ?>" class="btn btn-primary"><</a>
+    <?php endif; ?>
+
+    <span><?= $page . '/' . count($commande_pages) ?></span>
+
+    <?php if($page < count($commande_pages)): ?>
+        <a href="?page=<?= $page + 1 ?>" class="btn btn-primary">></a>
+    <?php endif; ?>
+
+    <form action="" method="get" class="items-per-page-form">
+        <label for="limit">Afficher :</label>
+        <select name="limit" id="limit" class="items-per-page-select">
+            <option value="5" <?php if ($limit == 5) { echo 'selected'; } ?> >5</option>
+            <option value="10" <?php if ($limit == 10) { echo 'selected'; } ?>>10</option>
+            <option value="15" <?php if ($limit == 15) { echo 'selected'; } ?>>15</option>
+        </select>
+        <button type="submit" class="submit-button">Valider</button>
+    </form>
+</div>
+
+
   <div class="modal fade" id="add-commande">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -175,6 +324,37 @@ $commandes = $requete->fetchAll();
 
     <!-- /.modal-dialog -->
   </div>
+
+
+  <div class="modal fade" id="add-point">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <form class="forms-sample" method="post" action="traitement/traitement_clients_commandes_print.php">
+                        <div class="card-body">
+                           <div class="form-group">
+                            <select  name="client" class="form-control">
+                            <?php
+                                while ($selection = $requete_boutique->fetch()) 
+                              {
+                              echo '<option value="' . $selection['boutique_nom'] . '">' . $selection['boutique_nom'] . '</option>';
+                              }
+                            ?></select>
+
+</div>
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Sélectionner la date</label>
+                                  <input id="date" name="date" type="date" class="form-control">
+                                  </div>
+                            <input type="submit" class="btn btn-primary mr-2" value="Imprimer">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
 
 </div>
 
