@@ -115,7 +115,7 @@ $totalAVerser = (int) $somme_global['sum_cout_global'] -  $somme_depense['somme_
           <a href="clients_dashboard.php" class="nav-link">Acceuil</a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
-          <a href="clients_dashboard.php" class="nav-link">Mes colis</a>
+          <a href="clients_dashboard.php" class="nav-link">Mes commandes</a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
           <a href="../logout.php" class="nav-link">Déconnexion</a>
@@ -317,19 +317,19 @@ $totalAVerser = (int) $somme_global['sum_cout_global'] -  $somme_depense['somme_
               </a>
               <ul class="nav nav-treeview">
                 <li class="nav-item">
-                  <a href="commandes.php" class="nav-link">
+                  <a href="clients_dashboard.php" class="nav-link">
                     <i class="fas fa-file-alt"></i>
                     <p>Liste des commandes</p>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="pages/charts/chartjs.html" class="nav-link">
+                  <a href="colis_livres.php" class="nav-link">
                     <i class="fa fa-motorcycle"></i>
                     <p>Commandes Livrées</p>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="pages/charts/flot.html" class="nav-link">
+                  <a href="colis_non_livres.php" class="nav-link">
                     <i class="fas fa-exclamation-triangle"></i>
                     <p>Commandes non livrées</p>
                   </a>

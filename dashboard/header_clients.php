@@ -301,7 +301,7 @@ if (!isset($_SESSION['user_id'])) {
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-chart-pie"></i>
                 <p>
-                  Mes colis
+                  Mes commandes
                   <i class="right fas fa-angle-left"></i>
                 </p>
               </a>
@@ -309,19 +309,19 @@ if (!isset($_SESSION['user_id'])) {
                 <li class="nav-item">
                   <a href="clients_dashboard.php" class="nav-link">
                     <i class="fas fa-file-alt"></i>
-                    <p>Liste des colis</p>
+                    <p>Liste des commandes</p>
                   </a>
                 </li>
                 <li class="nav-item">
                   <a href="colis_livres.php" class="nav-link">
                     <i class="fa fa-motorcycle"></i>
-                    <p>Colis Livrées</p>
+                    <p>Commandes Livrées</p>
                   </a>
                 </li>
                 <li class="nav-item">
                   <a href="colis_non_livres.php" class="nav-link">
                     <i class="fas fa-exclamation-triangle"></i>
-                    <p>Colis non Livrés</p>
+                    <p>Commandes non Livrés</p>
                   </a>
                 </li>
               </ul>
