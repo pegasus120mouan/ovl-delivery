@@ -325,6 +325,111 @@ label {
     <!-- /.modal-dialog -->
   </div>
 
+  <div class="modal fade" id="search-commande-communes">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Recherche par Communes</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form class="forms-sample" method="GET" action="page_recherche.php">
+          <div class="card-body">
+            <div class="form-group">
+              <label for="communeInput">Entrez la commune</label>
+              <input type="text" class="form-control" id="communeInput" placeholder="Recherche une commune" name="recherche">
+            </div>
+            <button type="submit" class="btn btn-primary mr-2">Recherche</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recherche par Date -->
+<div class="modal fade" id="search-commande-date">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Recherche par Date</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form class="forms-sample" method="GET" action="page_recherche_date.php">
+          <div class="card-body">
+            <div class="form-group">
+              <label for="dateInput">Sélectionner la date</label>
+              <input type="date" class="form-control" id="dateInput" name="date">
+            </div>
+            <button type="submit" class="btn btn-primary mr-2">Recherche</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recherche par Livreur -->
+
+
+<!-- Recherche par Client -->
+
+
+<!-- Recherche par Statut -->
+<div class="modal fade" id="search-commande-statut">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Recherche par Statut</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form class="forms-sample" method="GET" action="page_recherche_statut.php">
+          <div class="card-body">
+            <div class="form-group">
+                    <label>Selectionner le statut</label>
+                    <select name="statut" class="form-control">
+                    <option value="Livré">Livré</option>
+                    <option value="Non Livré">Non Livré</option>
+                      
+                      </select>
+
+                  </div>
+            <button type="submit" class="btn btn-primary mr-2">Recherche</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Main Search Modal -->
+<div class="modal fade" id="search-commande">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Recherche un point</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+      <button type="button" class="btn btn-outline-dark w-100 mb-2" onclick="showSearchModal('search-commande-communes')">
+          <i class="fa fa-map-marker"></i>Recherche par Communes
+      </button>  
+
+       <button type="button" class="btn btn-outline-dark w-100 mb-2" onclick="showSearchModal('search-commande-date')">
+       <i class="fa fa-calendar"></i>Recherche par Date
+       </button>
+
+
+        <button type="button" class="btn btn-outline-dark w-100 mb-2" onclick="showSearchModal('search-commande-statut')">
+        <i class="fa fa-check-circle"></i>Recherche par Statut
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
   <div class="modal fade" id="add-point">
         <div class="modal-dialog">
@@ -341,7 +446,7 @@ label {
                               }
                             ?></select>
 
-</div>
+                            </div>
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Sélectionner la date</label>
                                   <input id="date" name="date" type="date" class="form-control">
@@ -433,7 +538,17 @@ Toast.fire({
   $_SESSION['popup'] = false;
 }
 ?>
+<script>
+function showSearchModal(modalId) {
+  // Hide all modals
+  document.querySelectorAll('.modal').forEach(modal => {
+    $(modal).modal('hide');
+  });
 
+  // Show the selected modal
+  $('#' + modalId).modal('show');
+}
+</script>
 
 
 <!------- Delete Pop--->
